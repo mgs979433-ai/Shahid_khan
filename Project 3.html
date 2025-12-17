@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MiniFlix - Made by Shahid Khan</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* NAVBAR */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 40px;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav img {
+            width: 130px;
+        }
+
+        nav input {
+            padding: 7px;
+            border-radius: 5px;
+            border: none;
+            width: 200px;
+        }
+
+        /* HERO */
+        .hero {
+            height: 70vh;
+            background-image: url('https://images6.alphacoders.com/112/1126997.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 50px;
+        }
+
+        .hero h1 {
+            font-size: 50px;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 20px;
+            width: 45%;
+        }
+
+        /* MOVIE SECTION */
+        .section-title {
+            font-size: 28px;
+            margin: 20px 40px;
+        }
+
+        .movies {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 0 40px;
+        }
+
+        .movie {
+            min-width: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .movie:hover {
+            transform: scale(1.1);
+        }
+
+        .movie img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        /* POPUP PLAYER */
+        #playerModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #playerModal video {
+            width: 70%;
+            border: 2px solid white;
+        }
+
+        #closeBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: red;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 35px; }
+            .hero p { width: 90%; }
+            nav { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg">
+        <input type="text" id="searchBar" placeholder="Search movies...">
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+        <h1>Welcome to MiniFlix</h1>
+        <p>Watch trending movies, web series, and more — anytime, anywhere!</p>
+    </div>
+
+    <!-- Movie Section -->
+    <h2 class="section-title">Trending Now</h2>
+    <div class="movies" id="movieList">
+        <div class="movie" data-name="Stranger Things" data-video="https://www.w3schools.com/html/mov_bbb.mp4">
+            <img src="https://flxt.tmsimg.com/assets/p12990234_b1t_v10_aa.jpg">
+        </div>
+
+        <div class="movie" data-name="Money Heist" data-video="https://www.w3schools.com/html/movie.mp4">
+            <img src="https://m.media-amazon.com/images/I/81c7Mo8RX7L.jpg">
+        </div>
+
+        <div class="movie" data-name="Joker" data-video="https://www.w3schools.com/html/mov_bbb.mp4">
+            <img src="https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SL1500_.jpg">
+        </div>
+
+        <div class="movie" data-name="Extraction" data-video="https://www.w3schools.com/html/movie.mp4">
+            <img src="https://m.media-amazon.com/images/I/81P4ZVHK7FL.jpg">
+        </div>
+    </div>
+
+    <!-- PLAYER MODAL -->
+    <div id="playerModal">
+        <video id="player" controls autoplay></video>
+        <button id="closeBtn">Close</button>
+    </div>
+
+<script>
+    let movies = document.querySelectorAll(".movie");
+    let modal = document.getElementById("playerModal");
+    let video = document.getElementById("player");
+    let searchBar = document.getElementById("searchBar");
+
+    // Open video player
+    movies.forEach(m => {
+        m.addEventListener("click", () => {
+            video.src = m.dataset.video;
+            modal.style.display = "flex";
+        });
+    });
+
+    // Close video player
+    document.getElementById("closeBtn").onclick = () => {
+        modal.style.display = "none";
+        video.pause();
+    };
+
+    // Search movie
+    searchBar.addEventListener("keyup", () => {
+        let search = searchBar.value.toLowerCase();
+        movies.forEach(m => {
+            m.style.display = m.dataset.name.toLowerCase().includes(search) ? "block" : "none";
+        });
+    });
+</script>
+
+</body>
+</html>

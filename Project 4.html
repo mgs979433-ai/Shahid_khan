@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MiniFlix — Animated (by Shahid Khan)</title>
+  <style>
+    :root{
+      --bg:#000;
+      --muted:#bdbdbd;
+      --accent:#e50914;
+      --card-w:180px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg,#030303 0%, #0b0b0b 100%);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+
+    /* NAVBAR */
+    nav{
+      position:sticky; top:0; z-index:40;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 28px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0));
+      backdrop-filter: blur(6px);
+      animation: navFade .8s ease both;
+    }
+    @keyframes navFade{ from{ transform: translateY(-12px); opacity:0 } to{ transform:none; opacity:1 } }
+
+    .logo{
+      display:flex; gap:12px; align-items:center;
+      font-weight:800; font-size:22px; letter-spacing:1px;
+    }
+    .logo .dot{ width:38px; height:14px; background:var(--accent); display:inline-block; border-radius:4px }
+
+    .nav-actions{ display:flex; gap:12px; align-items:center }
+    .search{
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:8px 12px; border-radius:6px; color:#fff;
+      width:220px; outline:none;
+      transition: width .28s ease;
+    }
+    .search:focus{ width:320px; box-shadow:0 6px 20px rgba(0,0,0,0.6) inset }
+
+    .btn{
+      background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.08);
+      padding:7px 12px; border-radius:6px; cursor:pointer;
+    }
+    .btn.primary{ background:var(--accent); border-color:var(--accent); font-weight:600; }
+
+    /* HERO */
+    .hero{
+      min-height:62vh;
+      display:flex; align-items:center;
+      padding:48px;
+      gap:40px;
+      background-image: url('https://images.unsplash.com/photo-1517604931442-7a6f6d3d3f6f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=1d6b23b5c6d6c7de9c2b');
+      background-size:cover; background-position:center;
+      position:relative; overflow:hidden;
+    }
+    .hero::after{
+      content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
+    }
+    .hero-content{ position:relative; z-index:2; max-width:720px; }
+    .eyebrow{ color:var(--muted); font-size:14px; margin-bottom:12px; opacity:0; transform:translateY(8px); animation: slideUp .7s .1s both; }
+    h1{ font-size:48px; margin:0 0 16px 0; line-height:1.02; opacity:0; transform:translateY(12px) scale(.995); animation: slideUp .7s .2s both; }
+    p.lead{ color:#e6e6e6; font-size:18px; margin:0 0 20px 0; max-width:70%; opacity:0; transform:translateY(12px); animation: slideUp .7s .3s both; }
+
+    @keyframes slideUp{
+      from{ opacity:0; transform:translateY(18px) }
+      to{ opacity:1; transform:none }
+    }
+
+    .hero-cta{ display:flex; gap:12px; margin-top:18px; opacity:0; transform:translateY(6px); animation: slideUp .7s .35s both; }
+    .hero-cta .cta-input{
+      padding:10px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03); color:#fff; width:320px;
+    }
+
+    /* SECTIONS */
+    .section-title{ margin:28px 28px 8px; font-size:22px; color:#fff; }
+
+    .row{
+      display:flex; gap:18px; padding:18px 28px 28px;
+      overflow-x:auto; scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .movie{
+      min-width:var(--card-w);
+      flex:0 0 var(--card-w);
+      border-radius:8px; overflow:hidden; cursor:pointer;
+      transform:translateY(18px);
+      opacity:0;
+      transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .2s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+    }
+    .movie img{ width:100%; display:block; height:270px; object-fit:cover; }
+    .movie .mmeta{ padding:8px; font-size:14px; color:var(--muted) }
+    .movie:hover{ transform:translateY(0) scale(1.05); box-shadow: 0 18px 40px rgba(0,0,0,0.6); }
+
+    /* stagger-in animation using a custom property */
+    .movie[data-idx] { animation: cardIn .6s cubic-bezier(.2,.9,.3,1) var(--delay,0s) both; }
+    @keyframes cardIn {
+      from{ opacity:0; transform:translateY(26px) scale(.995) }
+      to{ opacity:1; transform:none }
+    }
+
+    /* Modal player */
+    .overlay{
+      position:fixed; inset:0; display:none; z-index:90;
+      align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+    }
+    .overlay.show{ display:flex; animation: overlayIn .18s ease both; }
+    @keyframes overlayIn{ from{ opacity:0 } to{ opacity:1 } }
+
+    .player{
+      width:80%; max-width:1100px; border-radius:10px; overflow:hidden;
+      background:#000;
+      transform:translateY(18px) scale(.98);
+      animation: popIn .24s cubic-bezier(.2,.9,.3,1) both;
+      box-shadow:0 24px 60px rgba(0,0,0,0.7);
+    }
+    @keyframes popIn{
+      from{ opacity:0; transform:translateY(28px) scale(.96) }
+      to{ opacity:1; transform:none }
+    }
+    .player video{ width:100%; height:60vh; display:block; background: #000; }
+    .player .controls{ display:flex; justify-content:space-between; padding:12px; background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2)); align-items:center; }
+    .player .title{ font-weight:700 }
+    .close-btn{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.08); padding:8px 12px; border-radius:6px; cursor:pointer; }
+
+    /* footer */
+    footer{ padding:36px 28px; color:var(--muted); font-size:13px; border-top:1px solid rgba(255,255,255,0.03); }
+
+    /* responsive */
+    @media (max-width:900px){
+      h1{ font-size:34px }
+      .hero p.lead{ max-width:100% }
+      .movie img{ height:200px }
+      .player video{ height:50vh }
+      .search{ width:150px }
+    }
+    @media (max-width:520px){
+      .hero{ padding:28px }
+      .hero-content{ max-width:100% }
+      .search{ display:none }
+      :root{ --card-w:150px }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo" aria-hidden="true">
+      <span class="dot" aria-hidden="true"></span>
+      <span>MiniFlix</span>
+    </div>
+
+    <div class="nav-actions" role="navigation" aria-label="Top navigation">
+      <input id="topSearch" class="search" type="search" placeholder="Search titles..." aria-label="Search movies">
+      <button class="btn">Browse</button>
+      <button class="btn primary">Sign In</button>
+    </div>
+  </nav>
+
+  <header class="hero" role="banner">
+    <div class="hero-content">
+      <div class="eyebrow">Unlimited movies, TV shows and more.</div>
+      <h1>Watch anywhere. Cancel anytime.</h1>
+      <p class="lead">Stream your favourite movies and TV shows. This is a small demo that mimics a streaming UI with animations, searchable titles and a player modal.</p>
+      <div class="hero-cta">
+        <input id="emailInput" class="cta-input" placeholder="Enter your email to get started" type="email" />
+        <button class="btn primary" onclick="alert('Demo only — no signups')">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h2 class="section-title">Trending Now</h2>
+    <div id="trendingRow" class="row" aria-live="polite"></div>
+
+    <h2 class="section-title">Recommended For You</h2>
+    <div id="recommendRow" class="row"></div>
+  </main>
+
+  <!-- Player Overlay -->
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="player" role="document">
+      <video id="playerVideo" controls playsinline></video>
+      <div class="controls">
+        <div class="title" id="playerTitle">Title</div>
+        <div>
+          <button id="closeModal" class="close-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Questions? This is a demo. Made by Shahid Khan.</footer>
+
+  <script>
+    // ---- Sample movie data (image + name + video). Use short sample mp4s available publicly.
+    const MOVIES = [
+      {name:"Stranger Things", img:"https://images-cdn.ubuy.co.in/633b46d605bcb21c8f7701b6-stranger-things-season-4-movie-poster.jpg", video:"https://view.vzaar.com/9075c75f-301e-96ae-4e9b-36b6f176bca8/video4"},
+      {name:"Money Heist", img:"https://i.imgur.com/T7Q7ZJd.jpg", video:"https://www.youtube.com/shorts/bmLfWq2zfZ8"},
+      {name:"Joker", img:"https://i.imgur.com/9fKQ0hU.jpg", video:"https://youtu.be/KtUbXbeMfxA"},
+      {name:"Extraction", img:"https://i.imgur.com/3QJmVwM.jpg", video:"https://youtu.be/KtUbXbeMfxA?t=19"},
+      {name:"The Crown", img:"https://i.imgur.com/gGQzXkK.jpg", video:"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"},
+      {name:"Dark", img:"https://i.imgur.com/0rVeh4F.jpg", video:"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"},
+      {name:"Sherlock", img:"https://i.imgur.com/pwVf7QZ.jpg", video:"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"}
+    ];
+
+    const trendingRow = document.getElementById('trendingRow');
+    const recommendRow = document.getElementById('recommendRow');
+    const overlay = document.getElementById('overlay');
+    const playerVideo = document.getElementById('playerVideo');
+    const playerTitle = document.getElementById('playerTitle');
+    const closeModal = document.getElementById('closeModal');
+    const topSearch = document.getElementById('topSearch');
+
+    // Utility: create movie card elements
+    function createMovieCard(movie, idx){
+      const card = document.createElement('div');
+      card.className = 'movie';
+      card.setAttribute('role','button');
+      card.setAttribute('tabindex','0');
+      card.dataset.name = movie.name.toLowerCase();
+      card.dataset.video = movie.video;
+      card.dataset.idx = idx;
+      // stagger delay
+      card.style.setProperty('--delay', `${idx * 0.06}s`);
+
+      const img = document.createElement('img');
+      img.src = movie.img;
+      img.alt = movie.name + ' poster';
+      const meta = document.createElement('div');
+      meta.className = 'mmeta';
+      meta.textContent = movie.name;
+
+      card.appendChild(img);
+      card.appendChild(meta);
+
+      // click / keyboard activate
+      card.addEventListener('click', () => openPlayer(movie));
+      card.addEventListener('keypress', (e) => { if(e.key === 'Enter' || e.key === ' ') openPlayer(movie); });
+
+      return card;
+    }
+
+    // Render rows
+    function renderRows(list){
+      trendingRow.innerHTML = '';
+      recommendRow.innerHTML = '';
+      list.forEach((m, i) => {
+        // for demo put first 4 in trending, rest in recommend (wrap-around)
+        const card = createMovieCard(m, i);
+        if(i < 4) trendingRow.appendChild(card);
+        else recommendRow.appendChild(card);
+      });
+      // if recommend empty, duplicate some so UI looks full
+      if(recommendRow.children.length === 0){
+        list.forEach((m,i) => {
+          if(i % 2 === 0) recommendRow.appendChild(createMovieCard(m, i+10));
+        });
+      }
+    }
+
+    // open modal and play
+    function openPlayer(movie){
+      playerTitle.textContent = movie.name;
+      playerVideo.src = movie.video;
+      // ensure overlay visible first
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden','false');
+      // play returns a promise
+      playerVideo.play().catch(()=>{/* autoplay may be blocked; user can press play */});
+      // trap focus loosely to close button
+      closeModal.focus();
+    }
+
+    function closePlayer(){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+      playerVideo.pause();
+      playerVideo.currentTime = 0;
+      playerVideo.src = '';
+    }
+
+    // close handlers
+    closeModal.addEventListener('click', closePlayer);
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) closePlayer();
+    });
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && overlay.classList.contains('show')) closePlayer();
+    });
+
+    // initial render
+    renderRows(MOVIES);
+
+    // Search filter: listens to topSearch and filters cards
+    topSearch.addEventListener('input', () => {
+      const q = topSearch.value.trim().toLowerCase();
+      // find all .movie in both rows
+      const cards = document.querySelectorAll('.movie');
+      cards.forEach(c => {
+        const name = c.dataset.name || '';
+        if(!q || name.includes(q)) c.style.display = 'block';
+        else c.style.display = 'none';
+      });
+    });
+
+    // small polish: lazy stagger reveal (in case some render late)
+    window.addEventListener('load', () => {
+      const all = document.querySelectorAll('.movie');
+      all.forEach((el,i)=> el.style.setProperty('--delay', `${i*0.06}s`));
+    });
+
+    // OPTIONAL: simple autoplay-demo behavior for hero (a soft animated background)
+    // not required — kept light for performance
+  </script>
+</body>
+</html>

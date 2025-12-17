@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VLC for Android — Play anything, anywhere Made by Shahid khan</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --card:#141414;
+      --muted:#bfc3c8;
+      --accent:#ff6b00; /* VLC orange */
+      --glass: rgba(255,255,255,0.04);
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* container */
+    .site {
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:28px;
+    }
+
+    /* top nav */
+    nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .brand img{width:56px;height:56px;object-fit:contain}
+    .brand h1{
+      font-size:18px;
+      margin:0;
+      letter-spacing:0.2px;
+      font-weight:700;
+    }
+    .nav-actions{display:flex;gap:12px;align-items:center}
+    .btn{
+      background:transparent;
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.08);
+      padding:8px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent), #ff8a3b);
+      border:none;
+      color: #111;
+      box-shadow: 0 6px 18px rgba(255,107,0,0.12);
+    }
+
+    /* hero */
+    .hero{
+      margin-top:22px;
+      background-image: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)), url('https://upload.wikimedia.org/wikipedia/commons/7/73/VLC_media_player_logo.svg');
+      background-size: cover;
+      background-position:center;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+      padding:44px;
+      min-height:300px;
+      backdrop-filter: blur(2px);
+    }
+    .hero-left h2{
+      font-size:34px;
+      margin:0 0 12px;
+      color:#fff;
+    }
+    .hero-left p{color:var(--muted); margin:0 0 18px; font-size:16px}
+    .download-bar{display:flex;gap:12px;align-items:center}
+    .playstore{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 14px;
+      background:var(--card);
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      text-decoration:none;
+      color:#fff;
+      font-weight:600;
+    }
+    .feature-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .feature{background:var(--glass);padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted);font-size:14px}
+
+    /* hero right mock phone */
+    .phone-mock{
+      background:linear-gradient(180deg,#0f0f0f, #000);
+      border-radius:18px;
+      padding:18px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .phone-mock img{
+      width:280px;
+      border-radius:12px;
+      display:block;
+    }
+
+    /* gallery with search */
+    .section{
+      margin-top:28px;
+      padding:26px;
+      background:transparent;
+    }
+    .section h3{margin:0 0 14px;font-size:22px}
+    .search-row{display:flex;gap:12px;align-items:center}
+    .search-row input{
+      flex:1;
+      padding:12px 14px;
+      border-radius:10px;
+      background:var(--card);
+      border:1px solid rgba(255,255,255,0.04);
+      color:#fff;
+      outline:none;
+    }
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;
+      margin-top:18px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:10px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .card img{width:100%;height:140px;object-fit:cover;border-radius:8px;display:block}
+    .card h4{margin:8px 0 4px;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+
+    /* small features row */
+    .features-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+    .mini{background:var(--card);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .mini h5{margin:0 0 8px}
+    .mini p{margin:0;color:var(--muted);font-size:14px}
+
+    /* FAQ */
+    .faq{
+      margin-top:34px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .faq-item{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+    .faq-item h5{margin:0}
+    .faq-item p{margin:8px 0 0;color:var(--muted);font-size:14px}
+
+    /* footer */
+    footer{margin-top:36px;padding:28px 0;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+    footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+
+    /* responsive */
+    @media (max-width:980px){
+      .hero-grid{grid-template-columns:1fr; padding:26px}
+      .phone-mock{order:-1;margin-bottom:12px}
+    }
+    @media (max-width:520px){
+      nav{gap:8px}
+      .brand h1{font-size:15px}
+      .hero-left h2{font-size:22px}
+      .hero-grid{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+
+    <nav>
+      <div class="brand" role="banner">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/VLC_media_player_logo.svg" alt="VLC logo">
+        <div>
+          <h1>VLC for Android</h1>
+          <div style="font-size:12px;color:var(--muted)">Play anything — videos, music & streams</div>
+        </div>
+      </div>
+
+      <div class="nav-actions" role="navigation" aria-label="Main navigation">
+        <button class="btn">Help</button>
+        <a class="btn primary" href="#" aria-label="Get VLC on Google Play">Get on Play Store</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <h2 id="hero-title">VLC for Android — Your pocket media player</h2>
+          <p>Lightweight, powerful, open-source. Play every audio & video format, enjoy subtitles, network streams, equalizer and more.</p>
+
+          <div class="feature-list" aria-hidden="false">
+            <span class="feature">Play virtually any format</span>
+            <span class="feature">Subtitles & multi-audio</span>
+            <span class="feature">Hardware decoding</span>
+            <span class="feature">Network streams & Chromecast</span>
+          </div>
+
+          <div style="margin-top:18px" class="download-bar">
+            <a class="playstore" href="#" target="_blank" rel="noopener">
+              <svg width="22" height="22" viewBox="0 0 24 24" style="opacity:0.95"><path fill="#fff" d="M2 2v20l20-10z"/></svg>
+              Get VLC on Play Store
+            </a>
+
+            <button class="btn" onclick="alert('Demo: open settings')">Sign in (optional)</button>
+          </div>
+        </div>
+
+        <div class="phone-mock" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1b0c4e4d6a6c9f0b2be8be5cb57f63d9" alt="App preview on phone">
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" aria-labelledby="features-title">
+      <h3 id="features-title">Top features</h3>
+      <div class="features-grid" role="list">
+        <div class="mini" role="listitem">
+          <h5>All formats</h5>
+          <p>Play MP4, MKV, AVI, MP3, FLAC and many more without extra codecs.</p>
+        </div>
+        <div class="mini" role="listitem">
+          <h5>Subtitles & Sync</h5>
+          <p>Load external subtitles or search automatically, adjust timing on the fly.</p>
+        </div>
+        <div class="mini" role="listitem">
+          <h5>Network & DLNA</h5>
+          <p>Stream from SMB, FTP, SFTP servers, or cast to devices using UPnP/DLNA.</p>
+        </div>
+        <div class="mini" role="listitem">
+          <h5>Equalizer & Audio</h5>
+          <p>Powerful audio controls, headset support and gapless playback.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY with Search -->
+    <section class="section" aria-labelledby="gallery-title">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <h3 id="gallery-title">Screenshots & photos</h3>
+        <div style="min-width:280px" class="search-row" aria-hidden="false">
+          <input id="search" type="search" placeholder="Search images (e.g., player, subtitle, equalizer)" aria-label="Search gallery">
+          <button class="btn" onclick="clearSearch()">Clear</button>
+        </div>
+      </div>
+
+      <div class="gallery" id="gallery" aria-live="polite">
+        <!-- Cards (data-tags used for search filter) -->
+        <div class="card" data-tags="player playback controls">
+          <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=9dcbf04a5c6d5b9db2f2f2b2c1c1a8f8" alt="Player UI with controls">
+          <h4>Player UI</h4>
+          <p>Minimal playback controls and timeline.</p>
+        </div>
+
+        <div class="card" data-tags="subtitle captions sync">
+          <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=7ec3f3eb1f4b7d3c1b6a9b7b9d1b2c8" alt="Subtitles on video">
+          <h4>Subtitles</h4>
+          <p>Load external subtitles or auto-search for best match.</p>
+        </div>
+
+        <div class="card" data-tags="equalizer audio sound">
+          <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=2d5b1c7fb0a6ea1d2b2a2d1c3d0b0e1c" alt="Equalizer settings">
+          <h4>Equalizer</h4>
+          <p>Fine tune sound with presets and manual EQ.</p>
+        </div>
+
+        <div class="card" data-tags="stream network dlna">
+          <img src="https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=b6a5a9d4d4d4f3a1b1c1d7f6a5b9b3c2" alt="Streaming from network">
+          <h4>Network Streaming</h4>
+          <p>Connect to SMB, FTP servers or stream online content.</p>
+        </div>
+
+        <div class="card" data-tags="playlist music audio">
+          <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=9f2c8f7b1f2e4a5f6a7b6c3d2e1f0a1b" alt="Music player playlist">
+          <h4>Music & Playlists</h4>
+          <p>Manage songs, create playlists and enjoy gapless playback.</p>
+        </div>
+
+        <div class="card" data-tags="chromecast cast">
+          <img src="https://images.unsplash.com/photo-1518756131217-31eb79b20e8f?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=3f8f3c2d1b2a4c5d6e7f8a9b0c1d2e3f" alt="Casting to TV">
+          <h4>Cast & Share</h4>
+          <p>Cast videos to compatible devices including Chromecast.</p>
+        </div>
+
+        <div class="card" data-tags="vlc logo about open-source">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/VLC_media_player_logo.svg" alt="VLC logo">
+          <h4>Open Source</h4>
+          <p>VLC is free and open-source — no ads, no tracking.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq" aria-labelledby="faq-title">
+      <h3 id="faq-title">Frequently Asked Questions</h3>
+
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div>
+          <h5>Is VLC for Android free?</h5>
+        </div>
+        <div aria-hidden="true">+</div>
+        <div style="display:none" class="answer">
+          <p>Yes — VLC is completely free and open source.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div>
+          <h5>Can I play subtitles?</h5>
+        </div>
+        <div aria-hidden="true">+</div>
+        <div style="display:none" class="answer">
+          <p>Yes — you can load external subtitle files or search online subtitle providers.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div>
+          <h5>Does it support streaming?</h5>
+        </div>
+        <div aria-hidden="true">+</div>
+        <div style="display:none" class="answer">
+          <p>Yes — network streams, HTTP links, SMB, FTP, SFTP and more are supported.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center">
+        <div>
+          <strong style="color:#fff">VLC for Android</strong>
+          <div style="font-size:13px;color:var(--muted)">© Open-source project</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <a href="#" class="btn">Privacy</a>
+          <a href="#" class="btn">Source Code</a>
+          <a href="#" class="btn">Support</a>
+        </div>
+      </div>
+
+      <div class="cols" style="margin-top:18px">
+        <div>
+          <h4 style="margin:0 0 8px">Get started</h4>
+          <a href="#">Download from Play Store</a><br/>
+          <a href="#">Manual & FAQs</a>
+        </div>
+        <div>
+          <h4 style="margin:0 0 8px">Community</h4>
+          <a href="#">GitHub</a><br/>
+          <a href="#">Forums</a>
+        </div>
+        <div>
+          <h4 style="margin:0 0 8px">Contact</h4>
+          <a href="mailto:help@example.org">help@example.org</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Simple gallery search filter
+    const search = document.getElementById('search');
+    const gallery = document.getElementById('gallery');
+    const cards = Array.from(gallery.querySelectorAll('.card'));
+
+    function normalize(s){ return (s||'').toString().trim().toLowerCase(); }
+
+    search.addEventListener('input', (e)=>{
+      const q = normalize(e.target.value);
+      cards.forEach(card=>{
+        const tags = normalize(card.dataset.tags || '') + ' ' + normalize(card.querySelector('h4')?.textContent || '') + ' ' + normalize(card.querySelector('p')?.textContent || '');
+        if(!q || tags.includes(q)){
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    function clearSearch(){
+      search.value = '';
+      search.dispatchEvent(new Event('input'));
+      search.focus();
+    }
+
+    // FAQ toggle
+    function toggleFAQ(el){
+      const answer = el.querySelector('.answer');
+      const symbol = el.querySelector('div[aria-hidden="true"]');
+      if(!answer) return;
+      if(answer.style.display === 'none' || answer.style.display === ''){
+        answer.style.display = 'block';
+        symbol.textContent = '−';
+      } else {
+        answer.style.display = 'none';
+        symbol.textContent = '+';
+      }
+    }
+
+    // Accessibility: allow Enter on FAQ items
+    document.querySelectorAll('.faq-item').forEach(item=>{
+      item.tabIndex = 0;
+      item.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' ') toggleFAQ(item);
+      });
+    });
+
+    // init: ensure all answers hidden
+    document.querySelectorAll('.faq-item .answer').forEach(a => a.style.display = 'none');
+  </script>
+</body>
+</html>
